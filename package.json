@@ -1,0 +1,23 @@
+{
+  "name": "kredily-hrm",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "start": "npm run build && node --env-file=backend/.env backend/server.mjs",
+    "dev": "node scripts/dev.mjs",
+    "build": "vite build --config vite.config.js",
+    "preview": "vite preview --config vite.config.js",
+    "check": "node --check backend/server.mjs && node --check scripts/dev.mjs"
+  },
+  "dependencies": {
+    "@reduxjs/toolkit": "^2.8.2",
+    "react": "^19.1.0",
+    "react-dom": "^19.1.0",
+    "react-redux": "^9.2.0",
+    "react-router-dom": "^7.6.2"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-react": "^4.5.2",
+    "vite": "^6.3.5"
+  }
+}
