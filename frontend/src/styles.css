@@ -22,6 +22,7 @@ button { cursor: pointer; color: inherit; }
 .app-shell { display: flex; min-height: 100vh; }
 .sidebar { width: 236px; position: fixed; inset: 0 auto 0 0; z-index: 20; display: flex; flex-direction: column; padding: 22px 14px 14px; background: #fff; border-right: 1px solid var(--line); transition: transform .2s ease; }
 .brand-mark { width: 39px; height: 39px; display: grid; place-items: center; margin: 0 0 22px 8px; border-radius: 12px; color: white; text-decoration: none; font: 800 22px Manrope,sans-serif; background: linear-gradient(145deg,#30245c,#8b70f3); box-shadow: 0 7px 15px #715de638; }
+.brand-mark img { width: 100%; height: 100%; border-radius: inherit; object-fit: cover; }
 .workspace-switch { display:flex;align-items:center;gap:10px;padding:10px 9px;margin:0 0 19px;border:1px solid var(--line);border-radius:12px;background:#fcfcfe;font-size:11px;font-weight:700; }.workspace-switch small,.profile-mini small { display:block;margin-top:3px;color:var(--muted);font-size:9px;font-weight:500; }.workspace-switch b{margin-left:auto;color:#999}.workspace-avatar{width:28px;height:28px;display:grid;place-items:center;border-radius:9px;background:#f0edff;color:var(--purple);font-weight:800}
 .side-nav { flex:1; display:flex;flex-direction:column;gap:4px;overflow:auto; }
 .nav-caption { padding:8px 10px 5px;color:#a6a8b4;font-size:8px;font-weight:800;letter-spacing:1px;text-transform:uppercase; }
@@ -60,3 +61,36 @@ button { cursor: pointer; color: inherit; }
 @media(max-width:850px){.sidebar{width:236px;transform:translateX(-100%);box-shadow:10px 0 30px #1c1c2820}.sidebar.sidebar-open{transform:translateX(0)}.main-area{width:100%;margin-left:0}.mobile-menu{display:grid!important}.topbar{height:60px;padding:0 17px;gap:11px}.dashboard-grid{grid-template-columns:1fr}.dashboard-right{grid-template-columns:repeat(2,minmax(0,1fr));align-items:start}.clock-widget{grid-column:span 2}.page-scroll{padding:20px 17px 45px}.metric-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:560px){.topbar{padding:0 10px;gap:8px}.breadcrumb-button{display:none}.global-search{width:auto;flex:1;height:33px}.global-search kbd,.top-action{display:none}.page-scroll{padding:16px 11px 35px}.page-heading{margin-bottom:16px}.page-heading h1{font-size:23px}.page-heading p{font-size:10px}.heading-actions .secondary-button{display:none}.metric-grid{gap:7px}.metric-card{min-height:94px;padding:11px}.metric-value{font-size:21px}.welcome-banner{min-height:135px;padding:17px}.welcome-art{right:7px;width:105px;height:110px;font-size:58px}.welcome-banner p{max-width:65%}.quick-grid{grid-template-columns:repeat(3,minmax(0,1fr))}.quick-card{min-height:76px}.dashboard-right{grid-template-columns:1fr}.clock-widget{grid-column:span 1}.leave-items{gap:5px}.leave-item{padding:10px 5px}.leave-item strong{font-size:18px}.section-title h2,.toolbar h2{font-size:12px}.toolbar{align-items:flex-start;flex-direction:column}.filter-input{width:100%}.toolbar-actions{width:100%}.content-panel{padding:12px}.assistant-button{right:13px;bottom:13px;width:43px;height:43px}}
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;animation-duration:.01ms!important;transition-duration:.01ms!important}}
+
+.topbar{position:sticky}
+.profile-popover,.notifications-popover{position:absolute;top:calc(100% + 9px);right:14px;z-index:45;border:1px solid rgba(255,255,255,.9);border-radius:20px;background:rgba(255,255,255,.96);box-shadow:0 18px 48px rgba(29,35,52,.2);backdrop-filter:blur(16px)}
+.profile-popover{width:min(315px,calc(100vw - 28px));padding:12px}
+.profile-popover-user{display:flex;align-items:center;gap:12px;padding:8px 7px 14px;border-bottom:1px solid #e8e9ed}
+.profile-popover-user .avatar{width:38px;height:38px;flex-basis:38px}
+.profile-popover-user strong,.profile-popover-user small{display:block;max-width:225px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.profile-popover-user strong{color:#1f2028;font-size:13px}
+.profile-popover-user small{margin-top:4px;color:#878a95;font-size:10px}
+.profile-popover>button{display:flex;width:100%;min-height:44px;align-items:center;gap:12px;padding:0 12px;border:0;border-radius:9px;background:transparent;color:#20232b;text-align:left;font-size:13px}
+.profile-popover>button:hover{background:#f5f4fb}
+.profile-popover>button.sign-out-item{margin-top:7px;border-top:1px solid #e8e9ed;border-radius:0 0 9px 9px;color:#30313a}
+.notifications-popover{display:flex;width:min(640px,calc(100vw - 28px));max-height:min(82vh,720px);flex-direction:column;overflow:hidden}
+.notifications-popover>header{display:flex;align-items:center;justify-content:space-between;padding:18px 22px;border-bottom:1px solid #eceef2;color:#292b34}
+.notifications-popover>header strong{font:800 17px Manrope,sans-serif}
+.notifications-popover>header span{color:#62646d;font-size:13px;font-weight:700}
+.notifications-list{overflow-y:auto;padding:0 7px}
+.notification-entry{display:grid;width:100%;gap:6px;padding:16px 21px;border:0;border-bottom:1px solid #e8e9ed;background:transparent;text-align:left}
+.notification-entry:hover{background:#f8f8fc}
+.notification-entry strong{color:#1d2027;font-size:14px}
+.notification-entry span{color:#5d5f66;font-size:13px;line-height:1.55}
+.notification-entry small{color:#9a9ca5;font-size:10px}
+.notification-entry .notification-chip{justify-self:start;padding:3px 10px;border-radius:20px;background:#f0edff;color:#6051de;font-size:11px;font-weight:700}
+.dark-mode .notification-entry .notification-chip{background:#3a3560;color:#cfc8ff}
+.notification-entry.read{opacity:.68}
+.notifications-mark-all{align-self:flex-end;margin:10px 16px 13px;padding:7px 12px;border:0;border-radius:8px;background:#f0edff;color:#6051de;font-size:10px;font-weight:700}
+.notifications-empty{margin:0;padding:25px;color:#797b84;font-size:12px}
+.dark-mode .profile-popover,.dark-mode .notifications-popover{border-color:#3a3846;background:rgba(38,37,48,.97)}
+.dark-mode .profile-popover-user strong,.dark-mode .profile-popover>button,.dark-mode .notifications-popover>header,.dark-mode .notification-entry strong{color:#efedf5}
+.dark-mode .profile-popover-user small,.dark-mode .notifications-popover>header span,.dark-mode .notification-entry span{color:#bbb8c5}
+.dark-mode .profile-popover-user,.dark-mode .profile-popover>button.sign-out-item,.dark-mode .notification-entry{border-color:#3c3948}
+.dark-mode .profile-popover>button:hover,.dark-mode .notification-entry:hover{background:#343240}
+@media(max-width:560px){.profile-popover,.notifications-popover{right:7px}.notifications-popover>header{padding:15px 16px}.notification-entry{padding:14px}}

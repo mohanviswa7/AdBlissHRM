@@ -12,3 +12,4 @@ frontend/.env.*
 backend/.env
 backend/.env.*
 !backend/.env.example
+backend/data/auth-data.json
