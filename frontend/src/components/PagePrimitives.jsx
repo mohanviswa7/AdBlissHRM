@@ -4,9 +4,9 @@ export function escapeHtml(value = "") {
   return String(value).replace(/[&<>"']/g, (char) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[char]);
 }
 
-export function MetricGrid({ metrics = [] }) {
+export function MetricGrid({ metrics = [], className = "" }) {
   const palettes = [["#f0edff","#6d5ce8"],["#e9f8f2","#159a65"],["#fff4e5","#d99322"],["#fff0f2","#e85c69"]];
-  return <div className="metric-grid">{metrics.map((metric, index) => {
+  return <div className={`metric-grid ${className}`.trim()}>{metrics.map((metric, index) => {
     const [tint, tone] = palettes[index % palettes.length];
     return <article className="metric-card" style={{ "--tint": tint, "--tone": tone }} key={metric.label}>
       <div className="metric-top">{metric.label}<span className="metric-icon">{metric.icon || "✦"}</span></div>
@@ -21,7 +21,7 @@ export function DataTable({ headers = [], rows = [] }) {
     {rows.map((row, rowIndex) => <tr key={`${row[headers[0]] || "record"}-${rowIndex}`}>{headers.map((header) => {
       const value = row[header] ?? "—";
       if (header.toLowerCase() !== "status") return <td key={header}>{value}</td>;
-      const statusClass = /pending|review|processing|upcoming|action needed|in progress/i.test(String(value)) ? "pending" : /denied|rejected|overdue/i.test(String(value)) ? "review" : "";
+      const statusClass = /pending|review|processing|upcoming|action needed|in progress|anomaly/i.test(String(value)) ? "pending" : /denied|rejected|overdue|absent/i.test(String(value)) ? "review" : "";
       return <td key={header}><span className={`status-badge ${statusClass}`}>● {value}</span></td>;
     })}</tr>)}
   </tbody></table></div>;

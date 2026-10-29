@@ -10,6 +10,8 @@ const root = existsSync(buildRoot) ? buildRoot : sourceRoot;
 const port = Number(process.env.PORT || 3002);
 const allowedModules = new Set(["people","attendance","timesheet","leave","payroll","expenses","performance","documents","insurance","connect","settings"]);
 const contentTypes = { ".html":"text/html; charset=utf-8", ".css":"text/css; charset=utf-8", ".js":"text/javascript; charset=utf-8", ".mjs":"text/javascript; charset=utf-8", ".json":"application/json; charset=utf-8", ".svg":"image/svg+xml" };
+const directoryApiUrl = process.env.KREDILY_DIRECTORY_API_URL || "https://blissdigitalmedia.ai.kredily.com/kapi/v1/company/directory/employees/";
+const directoryOverviewApiUrl = process.env.KREDILY_DIRECTORY_OVERVIEW_API_URL || "https://app.ai.kredily.com/kapi/v1/company/directory/overview/";
 
 function sendJson(response, status, payload) {
   response.writeHead(status, { "content-type":"application/json; charset=utf-8", "cache-control":"no-store" });
@@ -25,6 +27,51 @@ async function readJson(request) {
   if (!raw) return {};
   try { return JSON.parse(raw); }
   catch { throw Object.assign(new Error("Request body must be valid JSON."), { status:400 }); }
+}
+
+async function fetchKredilyApi(url, { method = "GET", authorization } = {}) {
+  const headers = { accept:"application/json" };
+  if (authorization) headers.authorization = authorization;
+  if (method === "POST") headers["content-type"] = "application/json";
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), 15000);
+  let response;
+  try {
+    response = await fetch(url, {
+      method,
+      headers,
+      ...(method === "POST" ? { body:"{}" } : {}),
+      signal:controller.signal,
+    });
+  } catch (error) {
+    if (error.name === "AbortError") {
+      throw Object.assign(new Error("Kredily directory request timed out."), { status:502 });
+    }
+    throw Object.assign(new Error("Could not reach the Kredily directory API."), { status:502 });
+  } finally {
+    clearTimeout(timeout);
+  }
+
+  if (!response.ok) {
+    let detail = "";
+    try {
+      const body = await response.json();
+      detail = body.detail || body.error || "";
+    } catch {
+      // The upstream may return a non-JSON error body.
+    }
+    const formattedDetail = detail.replace(/\.$/, "");
+    const message = response.status === 403 || response.status === 401
+      ? `${response.status} access denied${formattedDetail ? `: ${formattedDetail}` : ""}. Configure the relevant Kredily authorization value in backend/.env.`
+      : `Kredily directory API request failed (${response.status})${formattedDetail ? `: ${formattedDetail}` : ""}.`;
+    throw Object.assign(new Error(message), { status:502 });
+  }
+
+  try {
+    return await response.json();
+  } catch {
+    throw Object.assign(new Error("Kredily directory API returned invalid JSON."), { status:502 });
+  }
 }
 
 function serveStatic(pathname, response) {
@@ -63,6 +110,39 @@ function dashboardData() {
 async function handleApi(request, response, url) {
   const pathname = url.pathname;
   if (request.method === "GET" && pathname === "/api/health") return sendJson(response,200,{status:"ok",service:"kredily-hrm-api"});
+  if (request.method === "GET" && pathname === "/api/people/config") {
+    const sharedAuthorization = Boolean(process.env.KREDILY_DIRECTORY_AUTHORIZATION);
+    return sendJson(response,200,{
+      directoryAuthorized:sharedAuthorization,
+      overviewAuthorized:Boolean(process.env.KREDILY_OVERVIEW_AUTHORIZATION || sharedAuthorization),
+    });
+  }
+  if (request.method === "GET" && pathname === "/api/people/overview") {
+    const overview = await fetchKredilyApi(directoryOverviewApiUrl, {
+      authorization:process.env.KREDILY_OVERVIEW_AUTHORIZATION || process.env.KREDILY_DIRECTORY_AUTHORIZATION,
+    });
+    return sendJson(response,200,{ overview });
+  }
+  if (request.method === "GET" && pathname === "/api/people/directory") {
+    const directory = await fetchKredilyApi(directoryApiUrl, {
+      method:"POST",
+      authorization:process.env.KREDILY_DIRECTORY_AUTHORIZATION,
+    });
+    const records = [
+      directory,
+      directory?.employees,
+      directory?.records,
+      directory?.results,
+      directory?.data,
+      directory?.data?.employees,
+      directory?.data?.records,
+      directory?.data?.results,
+    ].find(Array.isArray);
+    if (!records) {
+      throw Object.assign(new Error("Employee directory API response did not contain an employee list."), { status:502 });
+    }
+    return sendJson(response,200,{ records });
+  }
   if (request.method === "GET" && pathname === "/api/dashboard") return sendJson(response,200,dashboardData());
   if (request.method === "GET" && pathname === "/api/modules") return sendJson(response,200,{modules:Array.from(allowedModules)});
   if (request.method === "GET" && pathname === "/api/profile") return sendJson(response,200,{profile});

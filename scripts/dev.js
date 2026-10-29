@@ -13,8 +13,8 @@ function getAvailablePort() {
 }
 
 const apiPort = await getAvailablePort();
-const api = spawn(process.execPath, ["--env-file=backend/.env", "backend/server.mjs"], {
-  env: { ...process.env, PORT: String(apiPort) },
+const api = spawn(process.execPath, ["--env-file=backend/.env", "backend/server.js"], {
+  env: { ...process.env, NODE_ENV: process.env.NODE_ENV || "development", PORT: String(apiPort) },
   stdio: "inherit",
 });
 let web;
@@ -44,7 +44,11 @@ if (!apiReady) {
   shutdown(1);
 } else {
   web = spawn(process.execPath, ["node_modules/vite/bin/vite.js", "--config", "vite.config.js"], {
-    env: { ...process.env, HRM_API_PORT: String(apiPort) },
+    env: {
+      ...process.env,
+      FRONTEND_PORT: process.env.FRONTEND_PORT || process.env.PORT || "5173",
+      HRM_API_PORT: String(apiPort),
+    },
     stdio: "inherit",
   });
   web.once("error", (error) => { console.error("Could not start Vite:", error); shutdown(1); });

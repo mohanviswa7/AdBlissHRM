@@ -1,13 +1,13 @@
 {
-  "name": "kredily-hrm",
+  "name": "AdblissHRM",
   "private": true,
   "type": "module",
   "scripts": {
-    "start": "npm run build && node --env-file=backend/.env backend/server.mjs",
-    "dev": "node scripts/dev.mjs",
+    "start": "npm run build && node --env-file=backend/.env backend/server.js",
+    "dev": "node scripts/dev.js",
     "build": "vite build --config vite.config.js",
     "preview": "vite preview --config vite.config.js",
-    "check": "node --check backend/server.mjs && node --check scripts/dev.mjs"
+    "check": "node --check backend/server.js && node --check backend/auth.js && node --check scripts/dev.js"
   },
   "dependencies": {
     "@reduxjs/toolkit": "^2.8.2",

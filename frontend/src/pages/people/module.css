@@ -1,5 +1,725 @@
-.people-banner{min-height:145px;position:relative;overflow:hidden;padding:22px 25px;border:1px solid #e8e2ff;border-radius:17px;background:radial-gradient(circle at 88% 40%,#d9d3ff 0,transparent 28%),linear-gradient(110deg,#f3f0ff,#faf9ff 72%,#eeebff)}
-.people-banner-kicker,.week-kicker{color:#7565dc;font-size:8px;font-weight:800;letter-spacing:1px}.people-banner h2{margin:8px 0 5px;font:800 21px Manrope,sans-serif;letter-spacing:-.7px}.people-banner p{margin:0;color:#7e7d92;font-size:10px}.people-banner-art{position:absolute;right:11%;top:-19px;width:129px;height:171px;display:grid;place-items:center;border-radius:49% 49% 13px 13px;background:linear-gradient(145deg,#b2a7f8,#806de8);color:#fff;font-size:55px;box-shadow:0 12px 24px #6650d82a;transform:rotate(7deg)}.people-banner-art b{position:absolute;left:45px;top:56px;font-size:49px}.people-banner-art>span{position:absolute;right:9px;top:9px;color:#fff4bb;font-size:20px}.people-banner-art i{position:absolute;left:-18px;top:40px;color:#fff4bb;font-size:16px}
-.people-toolbar{display:grid;gap:12px;padding:15px 0 8px}.people-search{height:39px;display:flex;align-items:center;gap:10px;padding:0 12px;border:1px solid #e9eaf1;border-radius:10px;background:white;color:#9699a9}.people-search input{width:100%;border:0;outline:0;background:transparent;font-size:10px}.people-departments{display:flex;gap:7px;overflow:auto;padding:2px 0}.department-chip{white-space:nowrap;padding:7px 11px;border:1px solid #e9eaf1;border-radius:20px;background:#fff;color:#73768a;font-size:9px;font-weight:600}.department-chip.selected,.department-chip:hover{border-color:#d6d0ff;background:#f2efff;color:#6656d8}.people-summary{margin:4px 0 12px;color:#9799a9;font-size:9px}.people-summary strong{color:#36384b;font-size:10px}.people-summary i{padding:0 4px;color:#d0d1dc}
-.people-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:13px}.person-card{min-height:232px;position:relative;overflow:hidden;padding:13px 15px 11px;border:1px solid #ececf4;border-radius:15px;background:white;box-shadow:0 7px 22px #29264a08;transition:transform .18s,box-shadow .18s}.person-card:hover{transform:translateY(-3px);box-shadow:0 12px 27px #29264a12}.person-card-top{display:flex;justify-content:space-between;align-items:center}.person-presence{color:#8e91a2;font-size:8px}.person-presence i,.id-status i{width:6px;height:6px;display:inline-block;margin-right:4px;border-radius:50%;background:#32b77d}.person-more{border:0;background:transparent;color:#9da0ae;letter-spacing:1px}.person-portrait{width:63px;height:63px;position:relative;display:grid;place-items:center;margin:8px auto 10px;border:4px solid white;border-radius:50%;color:#fff;font:800 19px Manrope,sans-serif;box-shadow:0 4px 14px #3b31521c}.person-portrait.avatar-blue{background:linear-gradient(145deg,#77caf0,#4a75d9)}.person-portrait.avatar-green{background:linear-gradient(145deg,#70d8a6,#16987b)}.person-portrait.avatar-rose{background:linear-gradient(145deg,#ffaba0,#d95474)}.person-portrait.avatar-gold{background:linear-gradient(145deg,#ffd578,#e58d40)}.person-portrait.avatar-violet{background:linear-gradient(145deg,#ae91ff,#684bd4)}.portrait-spark{position:absolute;right:-7px;top:0;width:19px;height:19px;display:grid;place-items:center;border:2px solid white;border-radius:50%;background:#7865ec;color:white;font-size:9px}.person-card h2{margin:0;text-align:center;font:800 12px Manrope,sans-serif}.person-card>p{margin:4px 0;text-align:center;color:#828596;font-size:9px}.person-team{display:block;width:max-content;margin:6px auto 12px;padding:4px 9px;border-radius:20px;background:#f3f1ff;color:#6b5cda;font-size:8px;font-weight:700}.person-card-bottom{display:flex;align-items:center;justify-content:space-between;padding-top:9px;border-top:1px solid #f0f0f5;color:#9396a5;font-size:8px}.person-card-bottom button{border:0;background:transparent;color:#6d5ce8;font-size:8px;font-weight:700}
-@media(max-width:980px){.people-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}@media(max-width:560px){.people-banner{padding:18px}.people-banner-art{right:-2px;opacity:.65}.people-banner p{max-width:65%}.people-grid{grid-template-columns:1fr 1fr;gap:8px}.person-card{padding:11px 9px;min-height:220px}.person-card-bottom{font-size:7px}.person-card-bottom button{font-size:7px}}@media(max-width:390px){.people-grid{grid-template-columns:1fr}}
+.ad-people-page {
+  --people-accent: #7052ff;
+  min-height: 100%;
+  margin: -28px -30px -60px;
+  padding: 46px 30px 60px;
+  background:
+    radial-gradient(ellipse at 2% 2%, #f9d9e8 0, transparent 26%),
+    radial-gradient(ellipse at 99% 3%, #fff0cf 0, transparent 25%),
+    radial-gradient(ellipse at 0% 100%, #d2e8ff 0, transparent 33%),
+    radial-gradient(ellipse at 100% 100%, #eedcff 0, transparent 29%),
+    #fffafc;
+}
+
+.ad-people-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  margin: 0 0 18px;
+}
+
+.ad-people-title {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 11px;
+}
+
+.ad-people-title h1 {
+  margin: 0;
+  color: #171721;
+  font: 800 21px/1.3 Manrope, sans-serif;
+  letter-spacing: -.5px;
+}
+
+.ad-people-title h1 span,
+.ad-people-title p {
+  color: #77727d;
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 0;
+}
+
+.ad-people-title p {
+  margin: 0;
+}
+
+.ad-people-actions {
+  display: flex;
+  flex: none;
+  gap: 9px;
+}
+
+.ad-people-actions button {
+  min-height: 36px;
+  padding: 0 15px;
+  border: 0;
+  border-radius: 22px;
+  font-size: 11px;
+  font-weight: 750;
+  cursor: pointer;
+}
+
+.people-action-edit {
+  background: #fff;
+  color: #25232a;
+  box-shadow: 0 4px 13px #51424a0d;
+}
+
+.people-action-connect {
+  background: linear-gradient(110deg, #7655ff, #6541ed);
+  color: white;
+  box-shadow: 0 6px 16px #704cff40;
+}
+
+.ad-people-tabs {
+  display: flex;
+  width: max-content;
+  max-width: 100%;
+  gap: 4px;
+  overflow: auto;
+  margin: 0 0 16px;
+  padding: 5px;
+  border: 1px solid #f0e9ed;
+  border-radius: 16px;
+  background: #ffffffc9;
+  box-shadow: 0 5px 16px #4536400a;
+}
+
+.ad-people-tabs button {
+  flex: none;
+  padding: 10px 15px;
+  border: 0;
+  border-radius: 11px;
+  background: transparent;
+  color: #696570;
+  font-size: 11px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.ad-people-tabs button.active {
+  background: white;
+  color: #26232a;
+  box-shadow: 0 3px 10px #47344612;
+}
+
+.ad-people-page .people-search {
+  height: 64px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 0 17px;
+  border: 1px solid #f0eaf0;
+  border-radius: 20px;
+  background: #ffffffde;
+  box-shadow: 0 12px 25px #7253b21a;
+}
+
+.people-search-icon {
+  width: 40px;
+  height: 40px;
+  display: grid;
+  flex: none;
+  place-items: center;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #7255ff, #994bfa);
+  box-shadow: 0 5px 12px #7655ff35;
+  color: #fff;
+  font-size: 18px;
+}
+
+.ad-people-page .people-search input {
+  width: 100%;
+  min-width: 0;
+  height: 100%;
+  border: 0;
+  outline: 0;
+  background: transparent;
+  color: #35313b;
+  font-size: 14px;
+}
+
+.ad-people-page .people-search input::placeholder {
+  color: #95919a;
+  opacity: 1;
+}
+
+.ad-people-page .people-search kbd {
+  flex: none;
+  padding: 5px 8px;
+  border: 0;
+  border-radius: 9px;
+  background: #f7f5f2;
+  color: #89858a;
+  font-size: 11px;
+}
+
+.ad-people-clear {
+  flex: none;
+  border: 0;
+  background: transparent;
+  color: #777;
+  font-size: 21px;
+  cursor: pointer;
+}
+
+.ad-people-quick-links {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+  width: min(100%, 835px);
+  margin: 15px 0 17px;
+}
+
+.ad-people-quick-card {
+  min-height: 110px;
+  display: grid;
+  grid-template-columns: 41px 1fr;
+  grid-template-rows: auto auto;
+  column-gap: 12px;
+  align-content: center;
+  align-items: center;
+  padding: 16px 18px;
+  border: 1px solid #f0ebf0;
+  border-radius: 17px;
+  background: #ffffffc9;
+  text-align: left;
+  cursor: pointer;
+  transition: transform .18s, box-shadow .18s;
+}
+
+.ad-people-quick-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 9px 22px #51456310;
+}
+
+.ad-people-quick-card.active {
+  border-color: #d3c8ff;
+  box-shadow: 0 0 0 2px #7655ff18, 0 9px 22px #51456310;
+}
+
+.ad-people-quick-icon {
+  grid-row: 1 / 3;
+  width: 40px;
+  height: 40px;
+  display: grid;
+  place-items: center;
+  border-radius: 12px;
+  font-size: 18px;
+}
+
+.ad-people-quick-icon.green {
+  background: #e5f5e9;
+}
+
+.ad-people-quick-icon.pink {
+  background: #fbe5f0;
+}
+
+.ad-people-quick-card strong {
+  color: #25232a;
+  font-size: 12px;
+}
+
+.ad-people-quick-card small {
+  margin-top: 5px;
+  color: #85818a;
+  font-size: 11px;
+}
+
+.people-department-bar {
+  display: flex;
+  gap: 7px;
+  overflow-x: auto;
+  margin: 0 0 14px;
+  padding: 8px 10px;
+  border: 1px solid #f1ebf0;
+  border-radius: 17px;
+  background: #ffffffc9;
+}
+
+.people-department-bar .department-chip {
+  padding: 9px 14px;
+  border-color: transparent;
+  background: #fff;
+  color: #68646d;
+  font-size: 11px;
+}
+
+.people-department-bar .department-chip.selected,
+.people-department-bar .department-chip:hover {
+  border-color: transparent;
+  background: linear-gradient(120deg, #7454ff, #8b4ef6);
+  color: white;
+  box-shadow: 0 4px 10px #754cff35;
+}
+
+.ad-people-api-status,
+.ad-people-api-error {
+  margin: 0 0 12px;
+  color: #77727d;
+  font-size: 11px;
+}
+
+.ad-people-api-status {
+  padding: 0 3px;
+}
+
+.ad-people-api-error {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 11px 14px;
+  border: 1px solid #f1d9d4;
+  border-radius: 12px;
+  background: #fff8f6;
+  color: #8d4038;
+}
+
+.ad-people-api-error.needs-auth {
+  border-color: #e8defc;
+  background: #faf8ff;
+  color: #67549c;
+}
+
+.ad-people-api-error span {
+  min-width: 0;
+  overflow-wrap: anywhere;
+  line-height: 1.5;
+}
+
+.ad-people-api-error button {
+  flex: none;
+  border: 0;
+  background: transparent;
+  color: #6747e8;
+  font-size: 11px;
+  font-weight: 750;
+  cursor: pointer;
+}
+
+.ad-people-page .people-grid {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: 13px;
+}
+
+.ad-people-page .ad-person-card {
+  min-width: 0;
+  min-height: 270px;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  overflow: hidden;
+  padding: 0 13px 15px;
+  border: 1px solid #eee8f0;
+  border-radius: 21px;
+  background: linear-gradient(160deg, #fff 25%, #fffafd 100%);
+  box-shadow: 0 7px 18px #3a2f4d0b;
+  text-align: center;
+  cursor: pointer;
+  transition: transform .18s, box-shadow .18s;
+}
+
+.ad-people-page .ad-person-card::before {
+  position: absolute;
+  inset: 0 0 auto;
+  height: 52px;
+  background: linear-gradient(110deg, #f0edff, #f7f1ff);
+  content: "";
+}
+
+.ad-people-page .ad-person-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 13px 25px #4e3a6717;
+}
+
+.ad-people-page .ad-person-card:focus-visible {
+  outline: 3px solid #b9aaff;
+  outline-offset: 2px;
+}
+
+.ad-people-page .person-portrait {
+  width: 76px;
+  height: 76px;
+  position: relative;
+  z-index: 1;
+  display: grid;
+  flex: none;
+  place-items: center;
+  margin: 22px auto 8px;
+  border: 3px solid white;
+  border-radius: 50%;
+  background: linear-gradient(145deg, #ae91ff, #684bd4);
+  box-shadow: 0 5px 14px #5147c526;
+  color: white;
+  font: 800 20px Manrope, sans-serif;
+}
+
+.ad-people-page .person-portrait img,
+.ad-person-modal .person-portrait img {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.ad-people-page .person-portrait > span:not(.person-presence-dot) {
+  width: 100%;
+  height: 100%;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+}
+
+.ad-people-page .person-portrait .avatar-blue {
+  background: linear-gradient(145deg, #43b2ee, #376cdd);
+}
+
+.ad-people-page .person-portrait .avatar-green {
+  background: linear-gradient(145deg, #70d8a6, #16987b);
+}
+
+.ad-people-page .person-portrait .avatar-rose {
+  background: linear-gradient(145deg, #ffaba0, #d95474);
+}
+
+.ad-people-page .person-portrait .avatar-gold {
+  background: linear-gradient(145deg, #ffd578, #e58d40);
+}
+
+.person-presence-dot {
+  width: 15px;
+  height: 15px;
+  position: absolute;
+  right: -2px;
+  bottom: -1px;
+  border: 2px solid white;
+  border-radius: 50%;
+  background: #e89400;
+}
+
+.ad-people-page .ad-person-card h2 {
+  width: 100%;
+  margin: 0;
+  color: #24212a;
+  font: 800 14px/1.35 Manrope, sans-serif;
+}
+
+.ad-people-page .ad-person-card > p {
+  min-height: 31px;
+  margin: 5px 0 4px;
+  color: #77727d;
+  font-size: 11px;
+  line-height: 1.4;
+}
+
+.ad-person-card-meta {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  margin-top: 1px;
+  color: #918c96;
+  font-size: 10px;
+}
+
+.ad-person-card-meta i {
+  color: #aba5af;
+  font-style: normal;
+}
+
+.ad-person-card-actions {
+  display: flex;
+  gap: 7px;
+  margin-top: auto;
+  padding-top: 13px;
+}
+
+.ad-person-card-actions button {
+  width: 36px;
+  height: 35px;
+  border: 0;
+  border-radius: 12px;
+  background: #fff;
+  color: #8071c4;
+  font-size: 15px;
+  cursor: pointer;
+}
+
+.ad-person-card-actions button:hover {
+  background: #f3efff;
+  color: #684ce9;
+}
+
+.ad-person-modal-backdrop {
+  position: fixed;
+  z-index: 1000;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  padding: 20px;
+  background: #1c1b2b75;
+  backdrop-filter: blur(5px);
+}
+
+.ad-person-modal {
+  width: min(100%, 470px);
+  max-height: min(88vh, 760px);
+  position: relative;
+  overflow: auto;
+  padding: 30px;
+  border: 1px solid #ffffffb0;
+  border-radius: 23px;
+  background: #fff;
+  box-shadow: 0 30px 90px #17152d40;
+  text-align: center;
+}
+
+.ad-person-modal-close {
+  width: 32px;
+  height: 32px;
+  position: absolute;
+  top: 13px;
+  right: 15px;
+  border: 1px solid #eeeaf8;
+  border-radius: 50%;
+  background: #faf9ff;
+  color: #6d6682;
+  font-size: 21px;
+  cursor: pointer;
+}
+
+.ad-person-modal > .person-portrait {
+  width: 82px;
+  height: 82px;
+  display: grid;
+  place-items: center;
+  margin: 4px auto 12px;
+  border-radius: 50%;
+  background: linear-gradient(145deg, #ae91ff, #684bd4);
+  box-shadow: 0 5px 14px #5147c526;
+  color: white;
+  font-size: 23px;
+}
+
+.ad-person-modal-eyebrow {
+  color: #7665df;
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: 1.3px;
+}
+
+.ad-person-modal h2 {
+  margin: 8px 0 5px;
+  font-size: 23px;
+  letter-spacing: -.5px;
+}
+
+.ad-person-modal-role {
+  margin: 0;
+  color: #7f8294;
+  font-size: 12px;
+}
+
+.ad-person-detail-list {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0 18px;
+  margin: 23px 0 18px;
+  text-align: left;
+}
+
+.ad-person-detail-list > div {
+  min-width: 0;
+  padding: 12px 0;
+  border-top: 1px solid #f0eff5;
+}
+
+.ad-person-detail-list span {
+  display: block;
+  color: #9295a4;
+  font-size: 9px;
+}
+
+.ad-person-detail-list strong {
+  display: block;
+  margin-top: 5px;
+  overflow-wrap: anywhere;
+  color: #25283b;
+  font-size: 11px;
+}
+
+.ad-person-modal-actions {
+  display: flex;
+  justify-content: center;
+  gap: 9px;
+}
+
+@media (max-width: 1350px) {
+  .ad-people-page .people-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 1000px) {
+  .ad-people-page .people-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 700px) {
+  .ad-people-page {
+    margin: -16px -11px -35px;
+    padding: 25px 11px 35px;
+  }
+
+  .ad-people-heading {
+    align-items: flex-start;
+  }
+
+  .ad-people-title {
+    display: block;
+  }
+
+  .ad-people-title h1 {
+    font-size: 18px;
+  }
+
+  .ad-people-title p {
+    margin-top: 5px;
+    font-size: 10px;
+  }
+
+  .ad-people-actions {
+    gap: 5px;
+  }
+
+  .ad-people-actions button {
+    min-height: 32px;
+    padding: 0 10px;
+    font-size: 9px;
+  }
+
+  .ad-people-tabs {
+    width: 100%;
+  }
+
+  .ad-people-tabs button {
+    padding: 9px 11px;
+    font-size: 10px;
+  }
+
+  .ad-people-page .people-search {
+    height: 54px;
+    padding: 0 11px;
+  }
+
+  .people-search-icon {
+    width: 35px;
+    height: 35px;
+  }
+
+  .ad-people-page .people-search input {
+    font-size: 11px;
+  }
+
+  .ad-people-quick-links {
+    gap: 8px;
+  }
+
+  .ad-people-quick-card {
+    min-height: 96px;
+    grid-template-columns: 34px 1fr;
+    column-gap: 8px;
+    padding: 11px;
+  }
+
+  .ad-people-quick-icon {
+    width: 34px;
+    height: 34px;
+    font-size: 16px;
+  }
+
+  .ad-people-quick-card small {
+    font-size: 9px;
+  }
+
+  .people-department-bar {
+    gap: 4px;
+    padding: 6px;
+  }
+
+  .people-department-bar .department-chip {
+    padding: 8px 10px;
+    font-size: 9px;
+  }
+
+  .ad-people-page .people-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+  }
+
+  .ad-people-page .ad-person-card {
+    min-height: 245px;
+    padding: 0 8px 11px;
+  }
+
+  .ad-people-page .person-portrait {
+    width: 63px;
+    height: 63px;
+    margin-top: 23px;
+  }
+
+  .ad-people-page .ad-person-card h2 {
+    font-size: 12px;
+  }
+
+  .ad-people-page .ad-person-card > p {
+    font-size: 9px;
+  }
+
+  .ad-person-card-meta {
+    gap: 4px;
+    font-size: 9px;
+  }
+
+  .ad-person-modal {
+    padding: 25px 18px;
+  }
+
+  .ad-person-detail-list {
+    gap: 0 12px;
+  }
+}
+
+@media (max-width: 430px) {
+  .ad-people-heading {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .ad-people-quick-links {
+    grid-template-columns: 1fr;
+  }
+
+  .ad-people-quick-card {
+    min-height: 76px;
+  }
+
+  .ad-people-page .people-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .ad-people-page .ad-person-card {
+    min-height: 225px;
+  }
+
+  .ad-person-modal-actions {
+    flex-wrap: wrap;
+  }
+}

@@ -7,7 +7,7 @@ export default defineConfig({
   plugins: [react()],
   server: {
     host: "0.0.0.0",
-    port: 5173,
+    port: Number(process.env.FRONTEND_PORT || 5173),
     proxy: {
       "/api": `http://127.0.0.1:${process.env.HRM_API_PORT || 3002}`,
     },
