@@ -1,8 +1,25 @@
+import { useState } from "react";
 import { useOutletContext } from "react-router-dom";
-import { MetricGrid } from "../../components/PagePrimitives.jsx";
+import "./module.css";
+
+const first = (...values) => values.find((value) => value !== undefined && value !== null && String(value).trim() !== "");
+
+function Brand({ compact = false }) {
+  return <div className={`sc1-brand ${compact ? "sc1-brand-compact" : ""}`} aria-label="Adbliss Digital Media">
+    <span className="sc1-brand-mark">A</span>
+    <span className="sc1-brand-word">ADBLISS<small>DIGITAL MEDIA</small></span>
+  </div>;
+}
+
+function QRPattern() {
+  return <div className="sc1-qr" aria-label="QR code placeholder" role="img">
+    {Array.from({ length: 81 }, (_, i) => <i key={i} className={(i % 9 < 3 && Math.floor(i / 9) < 3) || (i % 9 > 5 && Math.floor(i / 9) < 3) || (i % 9 < 3 && Math.floor(i / 9) > 5) || ((i * 7 + Math.floor(i / 9) * 3) % 5 < 2) ? "on" : ""} />)}
+    <b className="sc1-finder sc1-finder-a" /><b className="sc1-finder sc1-finder-b" /><b className="sc1-finder sc1-finder-c" />
+  </div>;
+}
 
 export default function IDCard() {
-  const { data = {}, onAction } = useOutletContext();
+  const { data = {} } = useOutletContext() || {};
   const person = data.profile || {};
   return <>
     <div className="page-heading"><div><div className="eyebrow">MY PROFILE / EMPLOYEE ID</div><h1>Your work identity.</h1><p>One little card, all the places you belong. Your digital ID is ready whenever you are.</p></div><div className="heading-actions"><button className="secondary-button" onClick={() => onAction("share-id")}>↗ &nbsp;Share</button><button className="primary-button" onClick={() => onAction("module-action")}>↓ &nbsp;Download ID</button></div></div>

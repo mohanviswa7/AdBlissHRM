@@ -19,7 +19,7 @@ import "../pages/settings/module.css";
 import "../pages/timesheet/module.css";
 import {
   createModuleRecord,
-  loadModule,
+  loadModule, loadPeopleOverview,
   loadNotifications,
   markAllNotificationsRead,
   markNotificationRead,
@@ -70,11 +70,21 @@ export default function AppShell() {
   const unreadNotifications = state.unreadNotifications;
   const userName = currentUser?.name || "Employee";
   const userInitials = userName.split(/\s+/).slice(0, 2).map((part) => part[0]).join("").toUpperCase();
+  const peoplePageData =
+    route.id === "people"
+      ? moduleData || {
+          records: [],
+          error: state.errors.people || "Employee directory is unavailable.",
+        }
+      : moduleData;
   const peopleData = state.modules.people?.records || [];
   const matchedPages = pageConfigs.filter((page) => page.title.toLowerCase().includes(search.toLowerCase()) || page.section.toLowerCase().includes(search.toLowerCase()));
   const matchedPeople = search.trim().length > 1 ? peopleData.filter((person) => `${person.Name} ${person.Role} ${person.Department}`.toLowerCase().includes(search.toLowerCase())).slice(0, 4) : [];
 
-  useEffect(() => { dispatch(loadModule(route.id)); }, [dispatch, route.id]);
+  useEffect(() => {
+    dispatch(loadModule(route.id));
+    if (route.id === "people") dispatch(loadPeopleOverview());
+  }, [dispatch, route.id]);
   useEffect(() => { document.body.classList.toggle("dark-mode", darkMode); return () => document.body.classList.remove("dark-mode"); }, [darkMode]);
   useEffect(() => {
     document.title = `${route.title} — AdblissHRM`;
@@ -218,9 +228,9 @@ export default function AppShell() {
         {unreadNotifications > 0 && <button className="notifications-mark-all" onClick={() => dispatch(markAllNotificationsRead()).unwrap().catch((error) => dispatch(showToast({ message:error.message })))}>Mark all as read</button>}
       </div>}
     </header><section className="page-scroll"><div id="app" data-module={route.id === "dashboard" ? "dashboard" : undefined}>
-      {state.errors[route.id] ? <section className="panel error-panel"><span>!</span><h2>We couldn't load this page.</h2><p>{state.errors[route.id]}</p><button className="primary-button" onClick={() => dispatch(loadModule(route.id))}>Try again</button></section>
-        : state.loading[route.id] || !moduleData ? <div className="loading-state"><span className="loading-spinner" /><p>Getting your {route.title.toLowerCase()} ready...</p></div>
-          : <Outlet context={{config:route,data:moduleData,onAction:action,openPerson,quickLinks,dispatch,clockedIn:state.clockedIn,peopleData,user:currentUser}} />}
+      {route.id !== "people" && state.errors[route.id] ? <section className="panel error-panel"><span>!</span><h2>We couldn't load this page.</h2><p>{state.errors[route.id]}</p><button className="primary-button" onClick={() => dispatch(loadModule(route.id))}>Try again</button></section>
+        : state.loading[route.id] || !peoplePageData ? <div className="loading-state"><span className="loading-spinner" /><p>Getting your {route.title.toLowerCase()} ready...</p></div>
+          : <Outlet context={{config:route,data:peoplePageData,onAction:action,openPerson,quickLinks,dispatch,clockedIn:state.clockedIn,peopleData,user:currentUser}} />}
     </div></section></main>
     <button className="assistant-button" onClick={() => action("assistant")} aria-label="Open AdblissHRM assistant"><span>✦</span></button>
     <ToastRegion />
