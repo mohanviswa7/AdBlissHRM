@@ -9,7 +9,6 @@ import "../pages/dashboard/module.css";
 import "../pages/dashboard/layout.css";
 import "../pages/documents/module.css";
 import "../pages/expenses/module.css";
-import "../pages/id-card/module.css";
 import "../pages/insurance/module.css";
 import "../pages/leave/module.css";
 import "../pages/payroll/module.css";
@@ -227,7 +226,7 @@ export default function AppShell() {
         }}>{notification.title && <strong className="notification-chip">{notification.title}</strong>}<span>{notification.message}</span>{notification.createdAt && <small>{new Date(notification.createdAt).toLocaleDateString()}</small>}</button>)}</div> : <p className="notifications-empty">You're all caught up.</p>}
         {unreadNotifications > 0 && <button className="notifications-mark-all" onClick={() => dispatch(markAllNotificationsRead()).unwrap().catch((error) => dispatch(showToast({ message:error.message })))}>Mark all as read</button>}
       </div>}
-    </header><section className="page-scroll"><div id="app" data-module={route.id === "dashboard" ? "dashboard" : undefined}>
+    </header><section className="page-scroll"><div id="app" data-module={route.id}>
       {route.id !== "people" && state.errors[route.id] ? <section className="panel error-panel"><span>!</span><h2>We couldn't load this page.</h2><p>{state.errors[route.id]}</p><button className="primary-button" onClick={() => dispatch(loadModule(route.id))}>Try again</button></section>
         : state.loading[route.id] || !peoplePageData ? <div className="loading-state"><span className="loading-spinner" /><p>Getting your {route.title.toLowerCase()} ready...</p></div>
           : <Outlet context={{config:route,data:peoplePageData,onAction:action,openPerson,quickLinks,dispatch,clockedIn:state.clockedIn,peopleData,user:currentUser}} />}

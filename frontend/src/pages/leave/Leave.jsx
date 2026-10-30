@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useOutletContext } from "react-router-dom";
 import "./module.css";
 
@@ -22,7 +22,13 @@ export default function Leave() {
   const [search, setSearch] = useState("");
   const [filter, setFilter] = useState("All statuses");
   const [notice, setNotice] = useState("");
-  const [calendarMonth, setCalendarMonth] = useState(new Date(2026, 9, 1));
+  const [calendarMonth, setCalendarMonth] = useState(() => {
+    const now = new Date();
+    return new Date(now.getFullYear(), now.getMonth(), 1);
+  });
+  const [calendarEvents, setCalendarEvents] = useState({});
+  const [calendarLoading, setCalendarLoading] = useState(false);
+  const [calendarError, setCalendarError] = useState("");
   const balances = data.leaveBalances || [
     { type: "Casual Leave", short: "CL", available: 6.5, total: 12, color: "violet", note: "For personal time and recharge" },
     { type: "Earned Leave", short: "EL", available: 8, total: 15, color: "green", note: "Plan longer breaks ahead" },
@@ -41,6 +47,43 @@ export default function Leave() {
   };
   const changeMonth = (offset) => setCalendarMonth((month) => new Date(month.getFullYear(), month.getMonth() + offset, 1));
   const calendarDays = useMemo(() => { const year = calendarMonth.getFullYear(), month = calendarMonth.getMonth(), first = new Date(year, month, 1).getDay(), count = new Date(year, month + 1, 0).getDate(); return [...Array(first).fill(null), ...Array.from({ length: count }, (_, i) => i + 1)]; }, [calendarMonth]);
+  const calendarRange = useMemo(() => {
+    const year = calendarMonth.getFullYear();
+    const month = calendarMonth.getMonth();
+    const lastDay = new Date(year, month + 1, 0).getDate();
+    const monthText = String(month + 1).padStart(2, "0");
+    return {
+      from:`${year}-${monthText}-01`,
+      to:`${year}-${monthText}-${String(lastDay).padStart(2, "0")}`,
+    };
+  }, [calendarMonth]);
+
+  useEffect(() => {
+    if (tab !== "Calendar") return undefined;
+    const controller = new AbortController();
+    const query = new URLSearchParams(calendarRange);
+    setCalendarLoading(true);
+    setCalendarError("");
+    fetch(`/api/leave/calendar?${query}`, {
+      credentials:"same-origin",
+      headers:{ accept:"application/json" },
+      signal:controller.signal,
+    })
+      .then(async (response) => {
+        const result = await response.json().catch(() => ({}));
+        if (!response.ok) throw new Error(result.error || `Calendar request failed (${response.status}).`);
+        const events = result.data?.events;
+        if (!events || typeof events !== "object" || Array.isArray(events)) throw new Error("The leave calendar returned an unexpected response.");
+        setCalendarEvents(events);
+      })
+      .catch((error) => {
+        if (error.name !== "AbortError") setCalendarError(error.message || "Unable to load the leave calendar.");
+      })
+      .finally(() => {
+        if (!controller.signal.aborted) setCalendarLoading(false);
+      });
+    return () => controller.abort();
+  }, [calendarRange, tab]);
 
   return <div className="ad-leave-page">
     <div className="page-heading ad-leave-heading"><div><div className="eyebrow">PEOPLE OPERATIONS / TIME & ATTENDANCE</div><h1>Make time for what matters. ✳</h1><p>Plan your time away, check your balance, and keep your team in the loop.</p></div><div className="heading-actions"><button className="secondary-button" onClick={() => { const rows = [["Type","From","To","Days","Reason","Status"], ...requests.map((r) => [r.type,r.from,r.to,r.days,r.reason,r.status])]; const csv = rows.map((row) => row.map((v) => `"${String(v).replaceAll('"','""')}"`).join(",")).join("\n"); const url = URL.createObjectURL(new Blob([csv], {type:"text/csv;charset=utf-8;"})); const a = document.createElement("a"); a.href=url; a.download="adbliss-leave-requests.csv"; a.click(); URL.revokeObjectURL(url); }}>↓ &nbsp;Export</button><button className="primary-button" onClick={() => { setTab("Hub"); document.getElementById("ad-leave-form")?.scrollIntoView({ behavior: "smooth", block: "center" }); }}>＋ &nbsp;Apply leave</button></div></div>
@@ -54,7 +97,28 @@ export default function Leave() {
     </>}
     {tab === "Requests" && <section className="ad-leave-content-panel"><div className="ad-leave-section-title"><div><h2>Your leave requests</h2><p>Review request dates and track approval status.</p></div><button className="primary-button" onClick={()=>setTab("Hub")}>＋ New request</button></div><div className="ad-leave-table-tools"><input value={search} onChange={(e)=>setSearch(e.target.value)} placeholder="Search leave requests..."/><select value={filter} onChange={(e)=>setFilter(e.target.value)}><option>All statuses</option><option>Pending</option><option>Approved</option><option>Rejected</option></select></div><RequestTable requests={visibleRequests}/></section>}
     {tab === "Balances" && <section className="ad-leave-content-panel"><div className="ad-leave-section-title"><div><h2>Your leave balances</h2><p>Available entitlement for the current leave cycle.</p></div></div><div className="ad-leave-balance-cards">{balances.map((b)=><article key={b.type} className={`ad-leave-balance-card ${b.color}`}><span>{b.short}</span><h3>{b.type}</h3><strong>{b.available} <small>days left</small></strong><div className="ad-leave-progress"><i style={{width:`${Math.min(100,Number(b.total)?Number(b.available)/Number(b.total)*100:0)}%`}}/></div><p>{b.note}</p><small>{b.total} days total entitlement</small></article>)}</div></section>}
-    {tab === "Calendar" && <section className="ad-leave-content-panel"><div className="ad-leave-section-title"><div><h2>Leave calendar</h2><p>Plan around your requests and upcoming holidays.</p></div><div className="ad-leave-month-control"><button onClick={()=>changeMonth(-1)} aria-label="Previous month">‹</button><strong>{calendarMonth.toLocaleDateString("en-IN",{month:"long",year:"numeric"})}</strong><button onClick={()=>changeMonth(1)} aria-label="Next month">›</button></div></div><div className="ad-leave-calendar-grid">{["Sun","Mon","Tue","Wed","Thu","Fri","Sat"].map((day)=><b key={day}>{day}</b>)}{calendarDays.map((day,index)=>{const date=day?`${calendarMonth.getFullYear()}-${String(calendarMonth.getMonth()+1).padStart(2,"0")}-${String(day).padStart(2,"0")}`:"";const holiday=holidays.find((h)=>h.date===date);const request=requests.find((r)=>r.status==="Approved"&&date>=r.from&&date<=r.to);return <div key={`${date||"blank"}-${index}`} className={`ad-leave-calendar-day ${!day?"blank":""} ${holiday?"holiday":""} ${request?"approved":""}`}><span>{day||""}</span>{holiday&&<small>{holiday.name}</small>}{request&&<small>{request.type}</small>}</div>;})}</div><div className="ad-leave-calendar-legend"><span><i className="holiday-dot"/> Holiday</span><span><i className="approved-dot"/> Approved leave</span></div></section>}
+    {tab === "Calendar" && <section className="ad-leave-content-panel">
+      <div className="ad-leave-section-title">
+        <div><h2>Leave calendar</h2><p>Plan around your requests and upcoming holidays.</p></div>
+        <div className="ad-leave-month-control"><button onClick={()=>changeMonth(-1)} aria-label="Previous month">‹</button><strong>{calendarMonth.toLocaleDateString("en-IN",{month:"long",year:"numeric"})}</strong><button onClick={()=>changeMonth(1)} aria-label="Next month">›</button></div>
+      </div>
+      {calendarLoading && <p className="ad-leave-demo-note" role="status">Loading team calendar...</p>}
+      {calendarError && <p className="ad-leave-demo-note" role="alert">{calendarError}</p>}
+      <div className="ad-leave-calendar-grid">
+        {["Sun","Mon","Tue","Wed","Thu","Fri","Sat"].map((day)=><b key={day}>{day}</b>)}
+        {calendarDays.map((day,index)=>{
+          const date=day?`${calendarMonth.getFullYear()}-${String(calendarMonth.getMonth()+1).padStart(2,"0")}-${String(day).padStart(2,"0")}`:"";
+          const events=date && Array.isArray(calendarEvents[date]) ? calendarEvents[date] : [];
+          const hasHoliday=events.some((event)=>String(event.kind||"").toLowerCase()==="holiday");
+          const hasLeave=events.some((event)=>String(event.kind||"").toLowerCase().includes("leave"));
+          return <div key={`${date||"blank"}-${index}`} className={`ad-leave-calendar-day ${!day?"blank":""} ${hasHoliday?"holiday":""} ${hasLeave?"approved":""}`}>
+            <span>{day||""}</span>
+            {events.map((event,eventIndex)=><small key={`${event.kind||"event"}-${event.label||eventIndex}`}>{event.label||event.kind||"Event"}</small>)}
+          </div>;
+        })}
+      </div>
+      <div className="ad-leave-calendar-legend"><span><i className="holiday-dot"/> Holiday</span><span><i className="approved-dot"/> Leave</span></div>
+    </section>}
     {tab === "My Leave Rules" && <section className="ad-leave-content-panel"><div className="ad-leave-section-title"><div><h2>My leave rules</h2><p>A quick guide to the policies that shape your time off.</p></div></div><div className="ad-leave-rules-grid"><article><span>01</span><h3>Plan ahead</h3><p>Submit leave requests as early as possible so your team can plan coverage.</p></article><article><span>02</span><h3>Manager approval</h3><p>Requests remain pending until reviewed. Check the Requests tab for status changes.</p></article><article><span>03</span><h3>Give a clear reason</h3><p>Add a short note so your manager understands the request and can respond quickly.</p></article><article><span>04</span><h3>Check your balance</h3><p>Review the Balances tab before applying. Entitlements depend on company policy.</p></article></div><p className="ad-leave-demo-note">These are general guidance notes. Connect your company's HR policy API to show official Adbliss leave rules.</p></section>}
     {tab === "Accrual History" && <section className="ad-leave-content-panel"><div className="ad-leave-section-title"><div><h2>Accrual history</h2><p>See how your leave balance has changed over time.</p></div></div><div className="ad-leave-timeline">{[{date:"01 Oct 2026",title:"Monthly leave accrual",detail:"Current cycle balance refreshed",amount:"+1.00 day"},{date:"01 Sep 2026",title:"Monthly leave accrual",detail:"Monthly entitlement credited",amount:"+1.00 day"},{date:"01 Aug 2026",title:"Monthly leave accrual",detail:"Monthly entitlement credited",amount:"+1.00 day"}].map((item)=><div key={item.date}><i/><small>{item.date}</small><section><strong>{item.title}</strong><p>{item.detail}</p></section><b>{item.amount}</b></div>)}</div><p className="ad-leave-demo-note">Sample activity for layout preview. Real accrual events should come from the leave management API.</p></section>}
     {tab === "Insights" && <section className="ad-leave-content-panel"><div className="ad-leave-section-title"><div><h2>Your time-off insights</h2><p>A simple view of how you're using your leave.</p></div></div><div className="ad-leave-insight-grid"><article><small>REQUESTS THIS YEAR</small><strong>{requests.length}</strong><p>All submitted requests</p></article><article><small>APPROVED DAYS</small><strong>{requests.filter(r=>r.status==="Approved").reduce((sum,r)=>sum+Number(r.days||0),0)}</strong><p>Days away approved</p></article><article><small>AWAITING REVIEW</small><strong>{pendingCount}</strong><p>Requests pending a decision</p></article></div><div className="ad-leave-insight-message"><span>✦</span><div><strong>Rest is part of doing great work.</strong><p>Look ahead at your calendar and plan time away that works for you and your team.</p><button onClick={()=>setTab("Calendar")}>Plan your next break →</button></div></div></section>}

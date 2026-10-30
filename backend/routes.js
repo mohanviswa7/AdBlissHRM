@@ -3,6 +3,7 @@ import * as attendance from "./controllers/attendanceController.js";
 import * as auth from "./controllers/authController.js";
 import * as dashboard from "./controllers/dashboardController.js";
 import * as employeeDashboard from "./controllers/employeeDashboardController.js";
+import * as leave from "./controllers/leaveController.js";
 import * as modules from "./controllers/moduleController.js";
 import * as notifications from "./controllers/notificationController.js";
 import * as profile from "./controllers/profileController.js";
@@ -37,6 +38,7 @@ const protectedRoutes = [
   ["GET", "/api/dashboard/birthdays", dashboard.getBirthdays],
   ["GET", "/api/dashboard/anniversaries", dashboard.getAnniversaries],
   ["GET", "/api/dashboard/holidays", dashboard.getHolidays],
+  ["GET", "/api/leave/calendar", leave.getCalendar],
   ["GET", "/api/attendance/clock", attendance.getClock],
   ["POST", "/api/attendance/clock", attendance.toggleClock],
   ["GET", "/api/notifications", notifications.listNotifications],
