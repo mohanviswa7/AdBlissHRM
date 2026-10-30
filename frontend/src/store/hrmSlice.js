@@ -111,27 +111,30 @@ export const loadModule = createAsyncThunk(
     let endpoint = `/modules/${id}`;
 
     if (id === "dashboard") endpoint = "/dashboard";
-    if (id === "people") endpoint = "/people/directory";
     if (id === "holidays") endpoint = "/dashboard/attendance-birthday-anniversaries-holidays";
   if (id === "id-card") endpoint = "/id-card";
     if (id === "timesheet") endpoint = "/timesheet";
 
     if (id === "people") {
       try {
-        const config = await request("/people/config");
-        if (!config.directoryAuthorized) {
-          return {
-            id,
-            data: await loadPeoplePreview(
-              "Kredily directory authorization is not configured. Add the approved authorization value to backend/.env.",
-            ),
-          };
-        }
+        const records = [];
+        let page = 1;
+        let totalPages = 1;
+        do {
+          const result = await request("/company/directory/employees", {
+            method: "POST",
+            body: JSON.stringify({ page, page_size: 100, filters: {} }),
+          });
+          records.push(...(result.data?.employees || []));
+          totalPages = result.data?.pagination?.total_pages || 1;
+          page += 1;
+        } while (page <= totalPages);
+        return { id, data: { records, source: "kredily", count: records.length } };
       } catch (error) {
         return {
           id,
           data: await loadPeoplePreview(
-            error.message || "Unable to check directory API authorization.",
+            error.message || "Unable to load the employee directory.",
           ),
         };
       }

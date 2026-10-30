@@ -1,11 +1,13 @@
 import { getSession } from "./auth.js";
 import * as attendance from "./controllers/attendanceController.js";
 import * as auth from "./controllers/authController.js";
+import * as directory from "./controllers/directoryController.js";
 import * as dashboard from "./controllers/dashboardController.js";
 import * as employeeDashboard from "./controllers/employeeDashboardController.js";
 import * as leave from "./controllers/leaveController.js";
 import * as modules from "./controllers/moduleController.js";
 import * as notifications from "./controllers/notificationController.js";
+import * as people from "./controllers/peopleController.js";
 import * as profile from "./controllers/profileController.js";
 import { isRateLimited, rateLimitedPaths } from "./middleware/rateLimit.js";
 import { sendJson } from "./utils/http.js";
@@ -45,6 +47,10 @@ const protectedRoutes = [
   ["PATCH", /^\/api\/notifications\/([a-z0-9-]+)\/read$/, notifications.markRead],
   ["POST", "/api/notifications/read-all", notifications.markAllRead],
   ["GET", "/api/modules", modules.listModules],
+  ["POST", "/api/company/directory/employees", directory.listDirectoryEmployees],
+  ["GET", "/api/people/config", people.getConfig],
+  ["GET", "/api/people/overview", people.getOverview],
+  ["GET", "/api/people/directory", people.getDirectory],
   ["GET", "/api/profile", profile.getProfile],
   ["GET", "/api/id-card", profile.getIdCard],
   ["GET", "/api/timesheet", profile.getTimesheet],
